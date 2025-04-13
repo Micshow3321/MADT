@@ -1,0 +1,269 @@
+Q1.Xml.fiie
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press the button to start"
+        android:textSize="18sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/buttonStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Progress"
+        android:layout_marginTop="20dp" />
+
+</LinearLayout>
+
+Java.file
+
+package com.example.yourapp; // Change to your package name
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private ProgressBar progressBar;
+    private TextView textViewStatus;
+    private Button buttonStart;
+    private Handler handler = new Handler();
+    private int progressStatus = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        progressBar = findViewById(R.id.progressBar);
+        textViewStatus = findViewById(R.id.textViewStatus);
+        buttonStart = findViewById(R.id.buttonStart);
+
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startProgress();
+            }
+        });
+    }
+
+    private void startProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+        textViewStatus.setText("Loading...");
+
+        // Reset progress status
+        progressStatus = 0;
+        progressBar.setProgress(progressStatus);
+
+        // Simulate a long-running task using a new thread
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (progressStatus < 100) {
+                    // Update progress status
+                    progressStatus += 1;
+
+                    // Sleep for a short time to simulate work
+                    try {
+                        Thread.sleep(50); // Adjust the speed of progress
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Update the progress bar on the UI thread
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setProgress(progressStatus);
+                            if (progressStatus >= 100) {
+                                textViewStatus.setText("Task Completed!");
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+}
+
+Q2.Xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonInsert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Insert Employees" />
+
+    <Button
+        android:id="@+id/buttonShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show All Employees" />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:textSize="18sp" />
+
+</LinearLayout>
+
+Java.file
+
+package com.example.yourapp; // Change to your package name
+
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private DatabaseHelper databaseHelper;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        databaseHelper = new DatabaseHelper(this);
+        textViewResult = findViewById(R.id.textViewResult);
+        Button buttonInsert = findViewById(R.id.buttonInsert);
+        Button buttonShow = findViewById(R.id.buttonShow);
+
+        buttonInsert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertEmployees();
+            }
+        });
+
+        buttonShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAllEmployees();
+            }
+        });
+    }
+
+    private void insertEmployees() {
+        // Insert 5 new employees
+        databaseHelper.insertEmployee("John Doe", "123 Main St", "1234567890");
+        databaseHelper.insertEmployee("Jane Smith", "456 Elm St", "0987654321");
+        databaseHelper.insertEmployee("Alice Johnson", "789 Oak St", "5551234567");
+        databaseHelper.insertEmployee("Bob Brown", "321 Pine St", "5559876543");
+        databaseHelper.insertEmployee("Charlie Black", "654 Maple St", "5556543210");
+        textViewResult.setText("Inserted 5 new employees.");
+    }
+
+    private void showAllEmployees() {
+        Cursor cursor = databaseHelper.getAllEmployees();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (cursor.getCount() == 0) {
+            stringBuilder.append("No employees found.");
+        } else {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                String address = cursor.getString(2);
+                String phone = cursor.getString(3);
+                stringBuilder.append("ID: ").append(id)
+                        .append(", Name: ").append(name)
+                        .append(", Address: ").append(address)
+                        .append(", Phone: ").append(phone)
+                        .append("\n");
+            }
+        }
+        textViewResult.setText(stringBuilder.toString());
+        cursor.close();
+    }
+}
+
+DatabaseHelper.java
+
+package com.example.yourapp; // Change to your package name
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DatabaseHelper extends SQLiteOpenHelper {
+
+    private static final String DATABASE_NAME = "EmployeeDB";
+    private static final String TABLE_NAME = "Employee";
+    private static final String COL_1 = "E_id";
+    private static final String COL_2 = "name";
+    private static final String COL_3 = "address";
+    private static final String COL_4 = "ph_no";
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
+                COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_2 + " TEXT, " +
+                COL_3 + " TEXT, " +
+                COL_4 + " TEXT)";
+        db.execSQL(createTable);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
+    }
+
+    public boolean insertEmployee(String name, String address, String ph_no) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_2, name);
+        contentValues.put(COL_3, address);
+        contentValues.put(COL_4, ph_no);
+        long result = db.insert(TABLE_NAME, null, contentValues);
+        return result != -1; // Returns true if insert was successful
+    }
+
+    public Cursor getAllEmployees() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+    }
+}
