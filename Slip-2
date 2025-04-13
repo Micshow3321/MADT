@@ -1,0 +1,231 @@
+Q1.Xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a number"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/buttonCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check Perfect Number" />
+
+</LinearLayout>
+
+Java.file
+
+package com.example.yourapp; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber;
+    private Button buttonCheck;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber = findViewById(R.id.editTextNumber);
+        buttonCheck = findViewById(R.id.buttonCheck);
+
+        buttonCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkPerfectNumber();
+            }
+        });
+    }
+
+    private void checkPerfectNumber() {
+        String input = editTextNumber.getText().toString();
+        if (input.isEmpty()) {
+            Toast.makeText(this, "Please enter a number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int number = Integer.parseInt(input);
+        if (isPerfectNumber(number)) {
+            Toast.makeText(this, number + " is a perfect number", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, number + " is not a perfect number", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isPerfectNumber(int number) {
+        int sum = 0;
+        for (int i = 1; i <= number / 2; i++) {
+            if (number % i == 0) {
+                sum += i;
+            }
+        }
+        return sum == number;
+    }
+}
+
+Q2.Xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:padding="16dp"
+        android:background="#E0E0E0"
+        android:gravity="end" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:rowCount="5"
+        android:columnCount="4"
+        android:layout_marginTop="16dp">
+
+        <Button android:text="7" style="@style/CalculatorButton" />
+        <Button android:text="8" style="@style/CalculatorButton" />
+        <Button android:text="9" style="@style/CalculatorButton" />
+        <Button android:text="/" style="@style/CalculatorButton" />
+
+        <Button android:text="4" style="@style/CalculatorButton" />
+        <Button android:text="5" style="@style/CalculatorButton" />
+        <Button android:text="6" style="@style/CalculatorButton" />
+        <Button android:text="*" style="@style/CalculatorButton" />
+
+        <Button android:text="1" style="@style/CalculatorButton" />
+        <Button android:text="2" style="@style/CalculatorButton" />
+        <Button android:text="3" style="@style/CalculatorButton" />
+        <Button android:text="-" style="@style/CalculatorButton" />
+
+        <Button android:text="0" style="@style/CalculatorButton" />
+        <Button android:text="C" style="@style/CalculatorButton" />
+        <Button android:text="=" style="@style/CalculatorButton" />
+        <Button android:text="+" style="@style/CalculatorButton" />
+    </GridLayout>
+</LinearLayout>
+
+Res/values/styles.xml
+
+<resources>
+    <style name="CalculatorButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+</resources>
+
+Java.file
+
+package com.example.yourapp; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textViewResult;
+    private StringBuilder input = new StringBuilder();
+    private String operator = "";
+    private double firstOperand = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textViewResult = findViewById(R.id.textViewResult);
+        GridLayout gridLayout = findViewById(R.id.gridLayout);
+
+        for (int i = 0; i < gridLayout.getChildCount(); i++) {
+            Button button = (Button) gridLayout.getChildAt(i);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleButtonClick(button.getText().toString());
+                }
+            });
+        }
+    }
+
+    private void handleButtonClick(String value) {
+        if (value.matches("[0-9]")) {
+            // If the button is a number, append it to the input
+            input.append(value);
+            textViewResult.setText(input.toString());
+        } else if (value.equals("C")) {
+            // Clear the input
+            input.setLength(0);
+            operator = "";
+            firstOperand = 0;
+            textViewResult.setText("");
+        } else if (value.equals("=")) {
+            // Calculate the result
+            if (input.length() > 0) {
+                double secondOperand = Double.parseDouble(input.toString());
+                double result = performOperation(firstOperand, secondOperand, operator);
+                textViewResult.setText(String.valueOf(result));
+                input.setLength(0); // Clear input for next calculation
+                firstOperand = result; // Store result for further calculations
+                operator = ""; // Reset operator
+            }
+        } else {
+            // If the button is an operator
+            if (input.length() > 0) {
+                firstOperand = Double.parseDouble(input.toString());
+                operator = value; // Store the operator
+                input.setLength(0); // Clear input for the next number
+            }
+        }
+    }
+
+    private double performOperation(double firstOperand, double secondOperand, String operator) {
+        switch (operator) {
+            case "+":
+                return firstOperand + secondOperand;
+            case "-":
+                return firstOperand - secondOperand;
+            case "*":
+                return firstOperand * secondOperand;
+            case "/":
+                if (secondOperand != 0) {
+                    return firstOperand / secondOperand;
+                } else {
+                    // Handle division by zero
+                    return 0; // You can also show a Toast message here
+                }
+            default:
+                return secondOperand; // If no operator, return the second operand
+        }
+    }
+}
+
+
