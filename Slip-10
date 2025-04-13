@@ -1,0 +1,198 @@
+Q1.Xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/getnum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a number"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/buttonCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check" />
+
+</LinearLayout>
+
+Java.file
+
+package com.example.armstrongchecker; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber = findViewById(R.id.getnum);
+        Button buttonCheck = findViewById(R.id.buttonCheck);
+
+        buttonCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkArmstrong();
+            }
+        });
+    }
+
+    private void checkArmstrong() {
+        String numberStr = editTextNumber.getText().toString();
+        if (numberStr.isEmpty()) {
+            Toast.makeText(this, "Please enter a number.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int number = Integer.parseInt(numberStr);
+        int sum = 0;
+        int temp = number;
+        int digits = String.valueOf(number).length();
+
+        while (temp > 0) {
+            int digit = temp % 10;
+            sum += Math.pow(digit, digits);
+            temp /= 10;
+        }
+
+        if (sum == number) {
+            Toast.makeText(this, number + " is an Armstrong number.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, number + " is not an Armstrong number.", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+Q2.Xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Spinner
+        android:id="@+id/spinnerOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/buttonShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Selected" />
+
+    <Button
+        android:id="@+id/buttonClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear Selection" />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:textSize="18sp" />
+
+</LinearLayout>
+
+res/values/strings.xml
+
+<resources>
+    <string name="app_name">SpinnerButtonApp</string>
+    <string-array name="options_array">
+        <item>Select an option</item>
+        <item>Option 1</item>
+        <item>Option 2</item>
+        <item>Option 3</item>
+        <item>Option 4</item>
+        <item>Option 5</item>
+    </string-array>
+</resources>
+
+Java.file
+
+package com.example.spinnerbuttonapp; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Spinner spinnerOptions;
+    private Button buttonShow;
+    private Button buttonClear;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        spinnerOptions = findViewById(R.id.spinnerOptions);
+        buttonShow = findViewById(R.id.buttonShow);
+        buttonClear = findViewById(R.id.buttonClear);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        // Set up the Spinner
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.options_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerOptions.setAdapter(adapter);
+
+        // Set up the Spinner item selection listener
+        spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // You can handle item selection here if needed
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle case when nothing is selected
+            }
+        });
+
+        // Set up the Show button click listener
+        buttonShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String selectedItem = spinnerOptions.getSelectedItem().toString();
+                textViewResult.setText("Selected: " + selectedItem);
+            }
+        });
+
+        // Set up the Clear button click listener
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spinnerOptions.setSelection(0); // Reset to the first item
+                textViewResult.setText("");
+            }
+        });
+    }
+}
