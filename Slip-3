@@ -1,0 +1,190 @@
+Q1.xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a number"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/buttonCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check Armstrong Number" />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:paddingTop="16dp" />
+
+</LinearLayout>
+
+Java.file
+
+package com.example.yourapp; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber;
+    private Button buttonCheck;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber = findViewById(R.id.editTextNumber);
+        buttonCheck = findViewById(R.id.buttonCheck);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        buttonCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkArmstrongNumber();
+            }
+        });
+    }
+
+    private void checkArmstrongNumber() {
+        String input = editTextNumber.getText().toString();
+        if (input.isEmpty()) {
+            textViewResult.setText("Please enter a number");
+            return;
+        }
+
+        int number = Integer.parseInt(input);
+        if (isArmstrong(number)) {
+            textViewResult.setText(number + " is an Armstrong number");
+        } else {
+            textViewResult.setText(number + " is not an Armstrong number");
+        }
+    }
+
+    private boolean isArmstrong(int number) {
+        int sum = 0;
+        int originalNumber = number;
+        int numberOfDigits = String.valueOf(number).length();
+
+        while (number > 0) {
+            int digit = number % 10;
+            sum += Math.pow(digit, numberOfDigits);
+            number /= 10;
+        }
+
+        return sum == originalNumber;
+    }
+}
+
+Q2.Xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter phone number"
+        android:inputType="phone" />
+
+    <Button
+        android:id="@+id/buttonCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check Phone Number" />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:paddingTop="16dp" />
+
+</LinearLayout>
+
+Java.file
+
+package com.example.yourapp; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextPhoneNumber;
+    private Button buttonCheck;
+    private TextView textViewResult;
+
+    // Valid area codes
+    private final String[] validAreaCodes = {"040", "041", "050", "0400", "044"};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
+        buttonCheck = findViewById(R.id.buttonCheck);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        buttonCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkPhoneNumber();
+            }
+        });
+    }
+
+    private void checkPhoneNumber() {
+        String phoneNumber = editTextPhoneNumber.getText().toString().trim();
+        if (phoneNumber.isEmpty()) {
+            textViewResult.setText("Please enter a phone number.");
+            return;
+        }
+
+        // Check if the phone number is valid
+        if (isValidPhoneNumber(phoneNumber)) {
+            textViewResult.setText(phoneNumber + " is a valid phone number.");
+        } else {
+            textViewResult.setText(phoneNumber + " is not a valid phone number.");
+        }
+    }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        // Check for valid area code
+        for (String areaCode : validAreaCodes) {
+            if (phoneNumber.startsWith(areaCode)) {
+                // Check the length of the phone number
+                int totalLength = phoneNumber.length();
+                return totalLength >= 6 && totalLength <= 8;
+            }
+        }
+        return false; // Invalid area code
+    }
+}
