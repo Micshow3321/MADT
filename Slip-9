@@ -1,0 +1,266 @@
+Q1.xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/getnum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a number"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/buttonCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check" />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:textSize="18sp" />
+
+</LinearLayout>
+
+Java.file
+
+package com.example.yourapp; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber = findViewById(R.id.getnum);
+        textViewResult = findViewById(R.id.textViewResult);
+        Button buttonCheck = findViewById(R.id.buttonCheck);
+
+        buttonCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkPalindrome();
+            }
+        });
+    }
+
+    private void checkPalindrome() {
+        String numberStr = editTextNumber.getText().toString();
+        if (numberStr.isEmpty()) {
+            textViewResult.setText("Please enter a number.");
+            return;
+        }
+
+        // Check if the number is a palindrome
+        String reversedStr = new StringBuilder(numberStr).reverse().toString();
+        if (numberStr.equals(reversedStr)) {
+            textViewResult.setText(numberStr + " is a Palindrome.");
+        } else {
+            textViewResult.setText(numberStr + " is not a Palindrome.");
+        }
+    }
+}
+
+Q2.xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="36sp"
+        android:padding="16dp"
+        android:background="#E0E0E0"
+        android:gravity="end" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:rowCount="5"
+        android:columnCount="4">
+
+        <!-- Row 1 -->
+        <Button android:text="7" style="@style/CalculatorButton" />
+        <Button android:text="8" style="@style/CalculatorButton" />
+        <Button android:text="9" style="@style/CalculatorButton" />
+        <Button android:text="/" style="@style/CalculatorButton" />
+
+        <!-- Row 2 -->
+        <Button android:text="4" style="@style/CalculatorButton" />
+        <Button android:text="5" style="@style/CalculatorButton" />
+        <Button android:text="6" style="@style/CalculatorButton" />
+        <Button android:text="*" style="@style/CalculatorButton" />
+
+        <!-- Row 3 -->
+        <Button android:text="1" style="@style/CalculatorButton" />
+        <Button android:text="2" style="@style/CalculatorButton" />
+        <Button android:text="3" style="@style/CalculatorButton" />
+        <Button android:text="-" style="@style/CalculatorButton" />
+
+        <!-- Row 4 -->
+        <Button android:text="0" style="@style/CalculatorButton" />
+        <Button android:text="C" style="@style/CalculatorButton" />
+        <Button android:text="=" style="@style/CalculatorButton" />
+        <Button android:text="+" style="@style/CalculatorButton" />
+
+    </GridLayout>
+</LinearLayout>
+
+res/values/styles.xml
+
+<resources>
+    <style name="CalculatorButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_gravity">fill</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+</resources>
+
+Java.file
+
+package com.example.simplecalculator; // Change to your package name
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Stack;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textViewResult;
+    private StringBuilder input = new StringBuilder();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textViewResult = findViewById(R.id.textViewResult);
+        GridLayout gridLayout = findViewById(R.id.gridLayout);
+
+        for (int i = 0; i < gridLayout.getChildCount(); i++) {
+            Button button = (Button) gridLayout.getChildAt(i);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleButtonClick(button.getText().toString());
+                }
+            });
+        }
+    }
+
+    private void handleButtonClick(String value) {
+        if (value.equals("C")) {
+            // Clear the input
+            input.setLength(0);
+            textViewResult.setText("");
+        } else if (value.equals("=")) {
+            // Calculate the result
+            try {
+                double result = evaluateExpression(input.toString());
+                textViewResult.setText(String.valueOf(result));
+                input.setLength(0); // Clear input after calculation
+            } catch (Exception e) {
+                textViewResult.setText("Error");
+                input.setLength(0); // Clear input on error
+            }
+        } else {
+            // Append the value to the input
+            input.append(value);
+            textViewResult.setText(input.toString());
+        }
+    }
+
+    private double evaluateExpression(String expression) {
+        // This method evaluates the mathematical expression
+        // For simplicity, we will use a basic implementation
+        // You can enhance this with a more robust expression parser
+
+        Stack<Double> values = new Stack<>();
+        Stack<Character> operators = new Stack<>();
+
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+
+            // If the character is a digit, parse the full number
+            if (Character.isDigit(c)) {
+                StringBuilder sb = new StringBuilder();
+                while (i < expression.length() && (Character.isDigit(expression.charAt(i)) || expression.charAt(i) == '.')) {
+                    sb.append(expression.charAt(i++));
+                }
+                values.push(Double.parseDouble(sb.toString()));
+                i--; // Adjust for the outer loop increment
+            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                while (!operators.isEmpty() && precedence(c) <= precedence(operators.peek())) {
+                    values.push(applyOperation(operators.pop(), values.pop(), values.pop()));
+                }
+                operators.push(c);
+            }
+        }
+
+        while (!operators.isEmpty()) {
+            values.push(applyOperation(operators.pop(), values.pop(), values.pop()));
+        }
+
+        return values.pop();
+    }
+
+    private int precedence(char operator) {
+        switch (operator) {
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
+    private double applyOperation(char operator, double b, double a) {
+        switch (operator) {
+            case '+':
+                return a + b;
+            case '-':
+                return a - b;
+            case '*':
+                return a * b;
+            case '/':
+                if (b == 0) throw new UnsupportedOperationException("Cannot divide by zero");
+                return a / b;
+        }
+        return 0;
+    }
+}
