@@ -1,0 +1,293 @@
+Q1. 
+
+xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/number1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter first number"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/number2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter second number"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/buttonPower"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Calculate Power" />
+
+    <Button
+        android:id="@+id/buttonAverage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Calculate Average" />
+
+</LinearLayout>
+
+Result_xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back" />
+</LinearLayout>
+
+
+
+java.file
+
+package com.example.powerandaveragecalculator;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText number1;
+    private EditText number2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        number1 = findViewById(R.id.number1);
+        number2 = findViewById(R.id.number2);
+        Button buttonPower = findViewById(R.id.buttonPower);
+        Button buttonAverage = findViewById(R.id.buttonAverage);
+
+        buttonPower.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculatePower();
+            }
+        });
+
+        buttonAverage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateAverage();
+            }
+        });
+    }
+
+    private void calculatePower() {
+        double base = Double.parseDouble(number1.getText().toString());
+        double exponent = Double.parseDouble(number2.getText().toString());
+        double result = Math.pow(base, exponent);
+        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+        intent.putExtra("result", "Power: " + result);
+        startActivity(intent);
+    }
+
+       private void calculateAverage() {
+        double num1 = Double.parseDouble(number1.getText().toString());
+        double num2 = Double.parseDouble(number2.getText().toString());
+        double result = (num1 + num2) / 2;
+        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+        intent.putExtra("result", "Average: " + result);
+        startActivity(intent);
+    }
+}
+
+
+Result_Activity.java
+
+
+package com.example.powerandaveragecalculator;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ResultActivity extends AppCompatActivity {
+
+    private TextView resultTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_result);
+
+        resultTextView = findViewById(R.id.resultTextView);
+        Button buttonBack = findViewById(R.id.buttonBack);
+
+        // Get the result from the intent
+        Intent intent = getIntent();
+        String result = intent.getStringExtra("result");
+        resultTextView.setText(result);
+
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Close the current activity and return to the previous one
+            }
+        });
+    }
+}
+
+manifest.file
+
+<activity android:name=".ResultActivity"></activity>
+
+
+Q2.
+
+xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/inputString"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a string" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioUpperCase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Convert to Upper Case" />
+
+        <RadioButton
+            android:id="@+id/radioLowerCase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Convert to Lower Case" />
+
+        <RadioButton
+            android:id="@+id/radioReverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reverse String" />
+
+        <RadioButton
+            android:id="@+id/radioLength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get String Length" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/buttonPerform"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Perform Operation" />
+
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
+
+
+java.file
+
+package com.example.stringoperationsapp;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText inputString;
+    private RadioGroup radioGroup;
+    private TextView resultTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        inputString = findViewById(R.id.inputString);
+        radioGroup = findViewById(R.id.radioGroup);
+        Button buttonPerform = findViewById(R.id.buttonPerform);
+        resultTextView = findViewById(R.id.resultTextView);
+
+        buttonPerform.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performStringOperation();
+            }
+        });
+    }
+
+    private void performStringOperation() {
+        String input = inputString.getText().toString();
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        String result = "";
+
+        switch (selectedId) {
+            case R.id.radioUpperCase:
+                result = input.toUpperCase();
+                break;
+            case R.id.radioLowerCase:
+                result = input.toLowerCase();
+                break;
+            case R.id.radioReverse:
+                result = new StringBuilder(input).reverse().toString();
+                break;
+            case R.id.radioLength:
+                result = "Length: " + input.length();
+                break;
+            default:
+                result = "Please select an operation.";
+                break;
+        }
+
+        resultTextView.setText(result);
+    }
+}
