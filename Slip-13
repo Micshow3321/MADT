@@ -1,0 +1,269 @@
+Q1.
+
+xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Full Name" />
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/editTextConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirm Password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/buttonRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Register" />
+
+    <TextView
+        android:id="@+id/textViewMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
+
+java.file
+
+package com.example.registrationformapp;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextName;
+    private EditText editTextEmail;
+    private EditText editTextPassword;
+    private EditText editTextConfirmPassword;
+    private TextView textViewMessage;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextName = findViewById(R.id.editTextName);
+        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextPassword = findViewById(R.id.editTextPassword);
+        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
+        Button buttonRegister = findViewById(R.id.buttonRegister);
+        textViewMessage = findViewById(R.id.textViewMessage);
+
+        buttonRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateAndRegister();
+            }
+        });
+    }
+
+    private void validateAndRegister() {
+        String name = editTextName.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
+
+        if (name.isEmpty()) {
+            textViewMessage.setText("Please enter your name.");
+            return;
+        }
+
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            textViewMessage.setText("Please enter a valid email address.");
+            return;
+        }
+
+        if (password.isEmpty() || password.length() < 6) {
+            textViewMessage.setText("Password must be at least 6 characters long.");
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            textViewMessage.setText("Passwords do not match.");
+            return;
+        }
+
+        // If all validations pass
+        textViewMessage.setText("Registration Successful!");
+        // Here you can add code to save the user data or proceed to the next activity
+    }
+}
+
+Q2.
+
+xml.file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter item" />
+
+    <Button
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Item" />
+
+    <Button
+        android:id="@+id/buttonDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Item" />
+
+    <EditText
+        android:id="@+id/editTextSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search item" />
+
+    <ListView
+        android:id="@+id/listViewItems"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
+
+java.file
+
+
+package com.example.listviewdemo;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextItem;
+    private EditText editTextSearch;
+    private ListView listViewItems;
+    private ArrayList<String> itemList;
+    private ArrayAdapter<String> adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextItem = findViewById(R.id.editTextItem);
+        editTextSearch = findViewById(R.id.editTextSearch);
+        listViewItems = findViewById(R.id.listViewItems);
+        Button buttonAdd = findViewById(R.id.buttonAdd);
+        Button buttonDelete = findViewById(R.id.buttonDelete);
+
+        itemList = new ArrayList<>();
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, itemList);
+        listViewItems.setAdapter(adapter);
+
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addItem();
+            }
+        });
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItem();
+            }
+        });
+
+        editTextSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchItem(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+    }
+
+    private void addItem() {
+        String item = editTextItem.getText().toString().trim();
+        if (!TextUtils.isEmpty(item)) {
+            itemList.add(item);
+            adapter.notifyDataSetChanged();
+            editTextItem.setText("");
+            Toast.makeText(this, "Item added", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Please enter an item", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteItem() {
+        String item = editTextItem.getText().toString().trim();
+        if (itemList.contains(item)) {
+            itemList.remove(item);
+            adapter.notifyDataSetChanged();
+            editTextItem.setText("");
+            Toast.makeText(this, "Item deleted", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Item not found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void searchItem(String query) {
+        ArrayList<String> filteredList = new ArrayList<>();
+        for (String item : itemList) {
+            if (item.toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        adapter.clear();
+        adapter.addAll(filteredList);
+        adapter.notifyDataSetChanged();
+    }
+}
